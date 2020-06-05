@@ -11,10 +11,10 @@ import base64
 shows = pd.read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-01-08/IMDb_Economist_tv_ratings.csv')
 
 tv_shows = shows['title'].unique()
+
 shows['year'] = shows['date'].apply(lambda x: x[0:4])
 years = shows['year'].sort_values().unique()
 
-########### Function for setting color and fill color of lines depending on whether the show became better or worse over time
 def trend_color(df, variable_str):
     try: 
         if df[variable_str].iloc[0] > df[variable_str].iloc[-1]:
@@ -35,16 +35,26 @@ def trend_color(df, variable_str):
         line_color = 'rgb(255, 255, 0)'
         return [fill_color, line_color]
 
- 
-########### Initiate the app
-app = dash.Dash(__name__, eta_tags=[{"name": "viewport", "content": "width=device-width"}])
+
+
+
+app = dash.Dash(__name__, meta_tags=[{"name": "viewport", "content": "width=device-width"}])
+
 server = app.server
 app.title='The Golden Age of Television'
 
 image_filename = '/Users/jackmcmullen/First_dashboard_stuff/assets/hackcville-logo.png'
 encoded_image = base64.b64encode(open(image_filename, 'rb').read())
 
-########### Set up the layout
+
+# app.css.append_css({
+#     "external_url": "https://codepen.io/chriddyp/pen/bWLwgP.css"
+#       #'external_url':'https://raw.githubusercontent.com/plotly/dash-app-stylesheets/master/dash-analytics-report.css'
+# })
+
+image_filename = '/Users/jackmcmullen/First_dashboard_stuff/assets/hackcville-logo.png'
+encoded_image = base64.b64encode(open(image_filename, 'rb').read())
+
 layout = dict(
     autosize=True,
     automargin=True,
@@ -55,10 +65,13 @@ layout = dict(
     legend=dict(font=dict(size=10), orientation="h"),
     )
 
-########### Actual app!
 app.layout = html.Div(children=[
+    #dcc.Input(id='input', value='Type a TV Show', type='text'),
+    #html.Div(id='output-graph'),
+#     html.H1('The Golden Age of Television'),
     html.Div([
         html.Div([html.Img(
+#                 src=app.get_asset_url("python-logo.png"),
                 src = 'data:image/png;base64,{}'.format(encoded_image.decode()),
                 id="plotly-image",
                 style={
@@ -103,11 +116,18 @@ app.layout = html.Div(children=[
                                  multi=False     
                                  ), className='dcc_control'),
                 html.Div(dcc.Dropdown(id='year',
+            #                      options=[{'label': year, 'value': year}
+            #                                for year in years],
                                  placeholder = 'Select a Year',
                                  multi=False     
                                  ), className='dcc_control')
                 ], 
                     className = 'pretty_container four columns'
+            )#,
+#             html.Div(
+#                 html.Div((html.Div(children = html.Div(id='year-graphs', className = 'pretty_container'))), className='twelve columns')
+#             )
+#         ], id='left-column', className = 'four columns'),
     ]),
         html.Div([
             html.Div([
@@ -124,6 +144,11 @@ app.layout = html.Div(children=[
                        id = 'show-rank-box',
                        className = 'mini_container')
                    ], id = 'info-container', className= 'row container-display')#,
+
+#            html.Div(
+#                  html.Div((html.Div(children = html.Div(id='graphs', className='pretty_container'))), className='twelve columns'),
+                 
+#                 )
             ], 
         id='right-column',
         className='seven columns')
@@ -137,14 +162,42 @@ app.layout = html.Div(children=[
                      className='pretty_container five columns'),
         ])
 ], style={"display": "flex", "flex-direction": "column"})
+    #     html.Div(dcc.Dropdown(id='show_after_year',
+#                           options=[{'label': show, 'value': show},
+#                                       for show in tv_shows]))
+#     html.Div([
+#         html.Div((html.Div(children = html.Div(id='graphs', className='pretty_container'))), className='eight columns'),
+#         html.Div((html.Div(children = html.Div(id='year-graphs', className = 'pretty_container'))), className='eight columns')
+#     ], className='row flex-display')
+
+
+# @app.callback(
+#     Output(component_id='output-graph', component_property='children'),
+#     [Input(component_id='input', component_property='value')])
+
+
+# @app.callback(
+#     Output('year', 'value'),
+#     Input('year', 'options'))
+# def set_year_value(available_options):
+#     return available_options
 
 @app.callback(
+#     Output(component_id='graphs', component_property='children'),
     Output(component_id='graphs', component_property='figure'),
     [Input(component_id='tv-show-name', component_property='value')])
 
 def update_graph(tv_shows):
     graphs = []
+    
+#     if len(tv_shows)>2:
+#         class_choice = 'col s12 m6 l4'
+#     elif len(tv_shows) == 2:
+#         class_choice = 'col s12 m6 l6'
+#     else:
+#         class_choice = 'col s12' 
     try:
+        #for tv_show in tv_shows:
         tv_show_data = shows.loc[shows['title'] == tv_shows]
         years_running = list(tv_show_data['year'])
         years_running_str = '(' + years_running[0] + '-' + years_running[-1] + ')'
@@ -188,7 +241,17 @@ def update_graph(tv_shows):
                                       #autosize=False, width=425)
         fig.update_xaxes(title_standoff = 25)
 
+        #graphs.append(
         return fig
+#         return html.Div(dcc.Graph(
+#                       id=tv_shows,
+#                       figure = fig  #{
+#                           'data': [graph_data_rating],
+#                           'layout': {'title': 'Average Rating Per Season for {}'.format(tv_show)},}
+
+#                  ))
+
+#     return graphs
 
     except:
         pass
@@ -236,6 +299,7 @@ def rank_of_show_during_year(selected_year, selected_show):
 
 
 @app.callback(
+#     Output(component_id='year-graphs', component_property='children'),
     Output(component_id='year-graphs', component_property='figure'),
     [Input(component_id='year', component_property='value'),
         Input(component_id='tv-show-name', component_property='value')]
@@ -245,12 +309,16 @@ def update_year_graphs(year, tv_show_name):
     year_graphs = []
     
     try:
+    #         for year in years:
+        #yearly_data = shows.loc[shows['year'] == year]
+
         test = shows.loc[shows['year']==year].groupby('title').mean()['av_rating'].sort_values(ascending=False).reset_index()
         test['rank'] = range(1, test.shape[0]+1)
         test['rank'] = test['rank'].astype(str)
         test_10 = test.iloc[:10, :]
         show_row = test.loc[test['title']==tv_show_name]
         test_10 = test_10.append(show_row, ignore_index=True)
+        #test_10 = test_10.sort_values('av_rating')
 
         title_ranks = []
         for title, rank in zip(test_10['title'], test_10['rank']):
@@ -291,11 +359,34 @@ def update_year_graphs(year, tv_show_name):
                                           xaxis_title = 'Average IMDb Rating',
                                           paper_bgcolor = '#192444',
                                           plot_bgcolor = '#192444'))
+        
+    #             test = yearly_data.groupby('title').mean()['av_rating'].sort_values().reset_index()
+
+    #             fig_year = go.Figure(go.Bar(x=test['av_rating'][-10:], y=test['title'][-10:], orientation='h'))
+
+#         top_10_fig.update_layout(title = dict(text = 'Top 10 TV Shows in {}'.format(year),
+#                                                    xanchor='center',
+#                                                    x = 0.5, y = .98),
+#                                  #margin=dict(l=0, t=35, b=35, r=0),
+#                                  #legend=dict(x=0.05, y = 0.1),
+#                                  legend_orientation = 'h',
+#                                  font = dict(size = 12,
+#                                            color = '#7f7f7f',
+#                                            family = 'Courier New, monospace'))
+
+#         top_10_fig.update_xaxes(automargin=True)
+
+#         year_graphs.append(
+#         return html.Div(dcc.Graph(
+#                   id=year,
+#                   figure = top_10_fig))
        
         return top_10_fig
+#         return year_graphs
     
     except:
         pass
-
+    
+    
 if __name__ == '__main__':
     app.run_server()
