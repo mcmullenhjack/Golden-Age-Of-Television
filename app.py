@@ -44,7 +44,7 @@ server = app.server
 app.title='The Golden Age of Television'
 
 # image_filename = '/Users/jackmcmullen/First_dashboard_stuff/assets/hackcville-logo.png'
-image_filename = '/assets/hackcville-logo.png'
+image_filename = './assets/hackcville-logo.png'
 encoded_image = base64.b64encode(open(image_filename, 'rb').read())
 
 
