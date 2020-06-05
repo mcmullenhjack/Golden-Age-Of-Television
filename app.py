@@ -44,8 +44,8 @@ server = app.server
 app.title='The Golden Age of Television'
 
 # image_filename = '/Users/jackmcmullen/First_dashboard_stuff/assets/hackcville-logo.png'
-image_filename = 'mcmullenhjack/flying-dog-beers/assets/hackcville-logo.png'
-encoded_image = base64.b64encode(open(image_filename, 'rb').read())
+# image_filename = 'mcmullenhjack/flying-dog-beers/assets/hackcville-logo.png'
+# encoded_image = base64.b64encode(open(image_filename, 'rb').read())
 
 
 # app.css.append_css({
@@ -71,19 +71,19 @@ app.layout = html.Div(children=[
     #html.Div(id='output-graph'),
 #     html.H1('The Golden Age of Television'),
     html.Div([
-        html.Div([html.Img(
-#                 src=app.get_asset_url("python-logo.png"),
-                src = 'data:image/png;base64,{}'.format(encoded_image.decode()),
-                id="plotly-image",
-                style={
-                    "height": "95px",
-                    "width": "95px",
-                    "margin-bottom": "0px",
-                },
-            )
-        ],
-        className="one-third column",
-    ), 
+#         html.Div([html.Img(
+# #                 src=app.get_asset_url("python-logo.png"),
+#                 src = 'data:image/png;base64,{}'.format(encoded_image.decode()),
+#                 id="plotly-image",
+#                 style={
+#                     "height": "95px",
+#                     "width": "95px",
+#                     "margin-bottom": "0px",
+#                 },
+#             )
+#         ],
+#         className="one-third column",
+#     ), 
         html.Div(
         [
             html.Div(
