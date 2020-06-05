@@ -113,14 +113,14 @@ app.layout = html.Div(children=[
                 html.Div(dcc.Dropdown(id='tv-show-name',
                                  options=[{'label': show, 'value': show}
                                            for show in tv_shows],
-                                 value = '',
+                                 value = 'Scrubs',
                                  placeholder = 'Type or Choose a TV Show',
                                  multi=False     
                                  ), className='dcc_control'),
                 html.Div(dcc.Dropdown(id='year',
             #                      options=[{'label': year, 'value': year}
             #                                for year in years],
-                                 value = '',
+                                 value = '2004',
                                  placeholder = 'Select a Year',
                                  multi=False     
                                  ), className='dcc_control')
