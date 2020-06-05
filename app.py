@@ -120,7 +120,7 @@ app.layout = html.Div(children=[
                 html.Div(dcc.Dropdown(id='year',
             #                      options=[{'label': year, 'value': year}
             #                                for year in years],
-                                 value = '2004',
+                                 #value = '2003',
                                  placeholder = 'Select a Year',
                                  multi=False     
                                  ), className='dcc_control')
@@ -266,6 +266,16 @@ def set_year_options(selected_show):
     possible_years = shows.loc[shows['title']==selected_show, 'year'].unique()
     options = {selected_show: possible_years}
     return [{'label': i, 'value': i} for i in possible_years]
+
+@app.callback(
+    Output('year', 'value'),
+     [Input('tv-show-name', 'value')])
+def set_initial_year(selected_show):
+    possible_years = shows.loc[shows['title']==selected_show, 'year'].unique()
+    try:
+        return list(possible_years)[0]
+    except:
+        pass
 
 @app.callback(
     Output('tv_show_name_box', 'children'),
